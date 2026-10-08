@@ -1,5 +1,5 @@
 /* =========================================================
-   CA Harshit Dudeja & Co. — script.js
+   Harshit Dudeja & Co. — script.js
    ========================================================= */
 
 /* ---------- SETTINGS (edit only this block) ---------- */
@@ -7,7 +7,7 @@ const CONFIG = {
   whatsapp: "918010917581",                 // country code + number, no + or spaces
   // Get a free access key at https://web3forms.com (enter harshitdudeja.co@gmail.com)
   // and paste it below. Until then, the form falls back to opening WhatsApp.
-  web3formsKey: "YOUR_WEB3FORMS_ACCESS_KEY",
+  web3formsKey: "847c3d91-5804-4359-9522-9d3e2d695398",
 };
 
 // Pages share one script, so a missing element returns a harmless dummy instead of null
@@ -291,7 +291,7 @@ const ARTICLES = {
     title: "Privacy Policy",
     wa: "Hello, I have a question about your privacy policy.",
     html: `
-      <p>CA Harshit Dudeja &amp; Co. respects your privacy. This page explains in simple words what we do with the information you share on this website.</p>
+      <p>Harshit Dudeja &amp; Co. respects your privacy. This page explains in simple words what we do with the information you share on this website.</p>
       <h4>What we collect</h4>
       <p>Only what you type into the query form: your name, phone number, email (optional), the service you need and your message.</p>
       <h4>How we use it</h4>
@@ -299,7 +299,7 @@ const ARTICLES = {
       <h4>How it reaches us</h4>
       <p>Form submissions are sent to our email through a form-delivery service (Web3Forms). If you choose WhatsApp or phone instead, your conversation is handled through those apps under their own privacy terms.</p>
       <h4>Cookies and tracking</h4>
-      <p>This website does not use advertising cookies. The embedded map and fonts are loaded from Google and follow Google's privacy policy.</p>
+      <p>To block spam bots, the query form uses hCaptcha, which follows hCaptcha's own privacy policy. This website does not use advertising cookies. The embedded map and fonts are loaded from Google and follow Google's privacy policy.</p>
       <h4>Contact</h4>
       <p>To ask us to delete your details, email harshitdudeja.co@gmail.com.</p>`
   }
@@ -375,7 +375,8 @@ form.addEventListener("submit", async (e) => {
   if (form.elements.botcheck.checked) return;               // spam trap
 
   const btn = $("#qSubmit"), btnText = $("#qSubmitText");
-  const keyMissing = !CONFIG.web3formsKey || CONFIG.web3formsKey.startsWith("YOUR_");
+  const captchaBox = form.querySelector("textarea[name=h-captcha-response]");   // exists only if the hCaptcha widget loaded
+  const keyMissing = !CONFIG.web3formsKey || CONFIG.web3formsKey.startsWith("YOUR_") || !captchaBox;
 
   // Fallback: no email key yet -> open WhatsApp with the query
   if (keyMissing) {
@@ -385,6 +386,9 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
+  const captchaToken = captchaBox.value;
+  if (!captchaToken) { showStatus("err", "Please tick the 'I am human' box before sending."); return; }
+
   btn.disabled = true; btnText.textContent = "Sending...";
   try {
     const res = await fetch("https://api.web3forms.com/submit", {
@@ -393,17 +397,19 @@ form.addEventListener("submit", async (e) => {
       body: JSON.stringify({
         access_key: CONFIG.web3formsKey,
         subject: `New website query: ${data.service} (${data.name})`,
-        from_name: "CA Harshit Dudeja & Co. website",
+        from_name: "Harshit Dudeja & Co. website",
         name: data.name,
         phone: data.phone,
         email: data.email || "Not provided",
         service: data.service,
         message: data.message,
+        "h-captcha-response": captchaToken,
       }),
     });
     const json = await res.json();
     if (res.ok && json.success) {
       form.reset();
+      if (window.hcaptcha) { try { window.hcaptcha.reset(); } catch (e) {} }
       showStatus("ok", "Thank you! We have received your query and will contact you shortly.");
     } else {
       throw new Error(json.message || "Request failed");
@@ -420,35 +426,69 @@ form.addEventListener("submit", async (e) => {
    PRACTICE AREA DETAILS (opens in the same popup)
    ========================================================= */
 const SERVICE_DETAILS = {
-  "Accounting & Bookkeeping": {
-    what: ["Day-to-day bookkeeping and ledger maintenance", "Bank reconciliation", "Monthly MIS and management reports", "Preparation and finalisation of annual accounts"],
-    who: "Shops, small and medium businesses, professionals and firms that want clean, up-to-date books.",
-    docs: ["Bank statements", "Sales and purchase invoices", "Expense bills and vouchers", "Previous year's financial statements"]
+  "GST & Indirect Tax": {
+    "who": "Businesses registered under GST or required to register, and anyone who has received a GST notice or show cause notice.",
+    "docs": [
+      "GST portal login details",
+      "Sales and purchase data",
+      "Invoices and e-way bills, if any",
+      "Copy of any notice received"
+    ]
   },
-  "GST Compliance": {
-    what: ["GST registration, amendment and cancellation", "Monthly and quarterly return filing (GSTR-1, GSTR-3B and others)", "Input tax credit reconciliation", "Replies to GST notices"],
-    who: "Businesses that are registered under GST or need to register.",
-    docs: ["GST portal login details", "Sales and purchase data", "Invoices and e-way bills, if any", "Bank statements"]
+  "Income Tax & Direct Tax": {
+    "who": "Individuals, firms, companies and trusts, including anyone who has received an income tax notice.",
+    "docs": [
+      "PAN and Aadhaar",
+      "Form 16 / salary slips or books of accounts",
+      "Form 26AS and AIS",
+      "Bank statements and investment proofs",
+      "Copy of any notice received"
+    ]
   },
-  "Income Tax Filing": {
-    what: ["ITR filing for salaried individuals, professionals and businesses", "Capital gains reporting", "Advance tax calculation", "Help with income tax notices and rectification"],
-    who: "Salaried people, professionals, business owners, investors and anyone who has received an income tax notice.",
-    docs: ["PAN and Aadhaar", "Form 16 / salary slips", "Form 26AS and AIS", "Bank statements and investment proofs"]
+  "Statutory & Tax Audit": {
+    "who": "Companies, firms and organisations that need a statutory or tax audit, or want an independent review of their financials.",
+    "docs": [
+      "Books of accounts",
+      "Trial balance and bank statements",
+      "Loan, stock and fixed asset details",
+      "Previous audit reports, if any"
+    ]
   },
-  "Audit & Assurance": {
-    what: ["Tax audit support where applicable", "GST and accounts review", "Certification work", "Internal checks to reduce errors and risk"],
-    who: "Businesses and professionals whose turnover or activity requires an audit, or who want an independent review of their books.",
-    docs: ["Complete books of accounts", "Trial balance and bank statements", "Loan, stock and fixed asset details", "Previous audit reports, if any"]
+  "Financial Reporting & Accounting": {
+    "who": "Businesses that want reliable books and reports for management, lenders or investors.",
+    "docs": [
+      "Bank statements",
+      "Sales and purchase invoices",
+      "Expense bills and vouchers",
+      "Previous year's financial statements"
+    ]
   },
-  "Company / LLP Registration": {
-    what: ["Choosing between Private Limited, LLP and other structures", "Name approval and incorporation filings", "PAN, TAN and GST registration", "Guidance on first-year compliance"],
-    who: "Founders, startups and family businesses planning to move to a company or LLP structure.",
-    docs: ["PAN and Aadhaar of all directors / partners", "Address proof and photographs", "Registered office proof with owner's NOC", "Proposed names"]
+  "Startups & SMEs": {
+    "who": "Founders, startups and small and medium businesses that are setting up or growing.",
+    "docs": [
+      "PAN and Aadhaar of directors / partners",
+      "Address proof and photographs",
+      "Registered office proof with owner's NOC",
+      "Proposed business names"
+    ]
   },
-  "Tax Planning & Advisory": {
-    what: ["Old vs new tax regime comparison", "Planning of deductions and investments", "Advance tax and cash-flow planning", "Advice on structure for a growing business"],
-    who: "Individuals and business owners who want to pay the right tax, legally, and plan ahead instead of at the last minute.",
-    docs: ["Income details for the year", "Investment and loan details", "Previous year's returns"]
+  "NGOs, Trusts & Non-Profits": {
+    "who": "Trusts, societies, Section 8 companies and other non-profit organisations.",
+    "docs": [
+      "Trust deed / registration documents",
+      "PAN of the organisation",
+      "Audited accounts of previous years",
+      "Details of donations and activities"
+    ]
+  },
+  "Cross-Border & FEMA Compliance": {
+    "who": "Businesses and individuals making or receiving payments across borders.",
+    "docs": [
+      "Details of the remittance and the payee",
+      "Invoice or agreement with the foreign party",
+      "PAN and bank details",
+      "Purpose and nature of the payment"
+    ]
   }
 };
 
@@ -460,8 +500,7 @@ $$(".service").forEach((card) => {
   ARTICLES[key] = {
     title,
     wa: `Hello, I want to know more about: ${title}.`,
-    html: `<h4>What we do</h4><ul>${d.what.map((x) => `<li>${x}</li>`).join("")}</ul>
-           <h4>Who it is for</h4><p>${d.who}</p>
+    html: `<h4>Who it is for</h4><p>${d.who}</p>
            <h4>Documents usually needed</h4><ul>${d.docs.map((x) => `<li>${x}</li>`).join("")}</ul>
            <p><small>Exact requirements depend on your case. Message us and we will confirm.</small></p>`
   };

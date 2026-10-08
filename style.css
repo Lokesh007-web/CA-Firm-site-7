@@ -115,7 +115,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 .sub a { display: block; padding: 10px 14px; border-radius: 8px; color: var(--ink); font-size: .9rem; text-decoration: none; }
 .sub a:hover { background: var(--soft); color: var(--blue); }
-@media (hover: hover) and (min-width: 821px) {
+@media (hover: hover) and (min-width: 1101px) {
   .has-sub:hover > .sub { display: block; }
   .has-sub:hover > .sub-toggle .i { transform: rotate(180deg); }
 }
@@ -622,3 +622,58 @@ body::after { top: calc(50% + 100px); }
   .hero-inner { grid-template-columns: 1fr; gap: 36px; padding: 48px 0 100px; }
   .hero h1 { font-size: clamp(2.2rem, 7.5vw, 3rem); }
 }
+
+
+/* ---------- Hero tweaks: gold tab on the right, graceful fallback if the photo is missing ---------- */
+.hero-tab { left: auto; right: clamp(16px, 6vw, 90px); }
+.hero-media[hidden] { display: none; }
+.hero-inner.no-media { grid-template-columns: 1fr; }
+
+
+/* =========================================================
+   Hero: full-width photo background (copy on the left, banner visible on the right)
+   ========================================================= */
+.hero-photo { display: block; position: absolute; top: 0; right: 0; bottom: 0; left: auto; width: 70%; background: url("images/hero-final.jpg") right top / cover no-repeat; }
+.hero-overlay { display: block; background: linear-gradient(90deg, var(--blue) 0%, var(--blue) 30%, rgba(20, 89, 138, .86) 37%, rgba(20, 89, 138, .5) 44%, rgba(20, 89, 138, .12) 52%, rgba(20, 89, 138, 0) 60%); }
+.hero-inner { display: block; padding: 72px 0 110px; }
+.hero-copy { max-width: 500px; }
+.hero .lead { max-width: 470px; }
+.hero h1 { font-size: clamp(2rem, 3.3vw, 3.1rem); }
+.hero-tab { left: auto; right: clamp(16px, 6vw, 90px); }
+@media (max-width: 900px) {
+  .hero-inner { padding: 48px 0 340px; }
+  .hero-copy { max-width: 560px; }
+  .hero h1 { font-size: clamp(2.1rem, 7vw, 3rem); }
+  .hero-photo { top: auto; left: 0; width: 100%; height: 320px; background-position: center top; }
+  .hero-overlay { background: linear-gradient(180deg, var(--blue) calc(100% - 360px), rgba(20, 89, 138, 0) calc(100% - 270px)); }
+}
+@media (max-width: 640px) { .hero-photo { height: 280px; } .hero-inner { padding-bottom: 300px; } .hero-overlay { background: linear-gradient(180deg, var(--blue) calc(100% - 320px), rgba(20, 89, 138, 0) calc(100% - 235px)); } }
+
+/* ---------- Info update: about + services ---------- */
+.about-meta { margin: 6px 0 4px; padding-left: 14px; border-left: 3px solid var(--gold); font-size: .9rem; color: var(--muted); }
+.tile-b strong { font-size: clamp(1.7rem, 2.6vw, 2.2rem); }
+#services .service:last-child:nth-child(odd) { grid-column: 1 / -1; }
+@media (max-width: 640px) { #services .service:last-child:nth-child(odd) { grid-column: auto; } }
+
+
+/* ---------- Tablet: switch to the menu button earlier so the header never wraps ---------- */
+@media (max-width: 1100px) {
+  :root { --header-h: 72px; }
+  .menu-toggle { display: inline-flex; }
+  .nav { position: absolute; top: var(--header-h); left: 0; right: 0; display: none; background: #fff; padding: 8px 20px 22px; border-bottom: 1px solid var(--line); box-shadow: 0 20px 30px rgba(14, 70, 112, .12); max-height: calc(100vh - var(--header-h)); overflow-y: auto; }
+  .nav.open { display: block; }
+  .menu { flex-direction: column; align-items: stretch; gap: 0; }
+  .menu > li { border-bottom: 1px solid var(--line); }
+  .menu > li > a, .sub-toggle { width: 100%; justify-content: space-between; padding: 15px 4px; font-size: 1rem; border-radius: 0; }
+  .sub { position: static; box-shadow: none; border: 0; padding: 0 0 10px 12px; min-width: 0; }
+  .menu-cta { border-bottom: 0 !important; }
+  .menu .btn-connect { margin: 16px 0 0; width: 100%; justify-content: center; }
+  .hero-overlay { background: linear-gradient(90deg, var(--blue) 0%, var(--blue) 38%, rgba(20, 89, 138, .86) 46%, rgba(20, 89, 138, .5) 53%, rgba(20, 89, 138, .12) 61%, rgba(20, 89, 138, 0) 70%); }
+}
+@media (max-width: 900px) { .hero-overlay { background: linear-gradient(180deg, var(--blue) calc(100% - 360px), rgba(20, 89, 138, 0) calc(100% - 270px)); } }
+@media (max-width: 640px) { .hero-overlay { background: linear-gradient(180deg, var(--blue) calc(100% - 320px), rgba(20, 89, 138, 0) calc(100% - 235px)); } }
+
+/* keep the whole banner clear of the blue fade on narrower screens */
+@media (max-width: 1280px) { .hero-photo { background-position: calc(100% + 70px) top; } }
+@media (max-width: 1100px) { .hero-photo { background-position: calc(100% + 130px) top; } }
+@media (max-width: 900px)  { .hero-photo { background-position: center top; } }
