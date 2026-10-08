@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=10">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -301,6 +301,8 @@
         <!-- Spam trap: real visitors never see or fill this -->
         <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
+        <div class="h-captcha" data-captcha="true" style="margin-top:14px"></div>
+
         <button class="btn btn-blue block" type="submit" id="qSubmit"><span id="qSubmitText">Submit Query</span> <svg class="i"><use href="#i-arrow"/></svg></button>
         <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
         <p class="fine center">Your details are secure and never shared. <a class="text-btn" href="privacy.html">Privacy policy</a></p>
@@ -413,6 +415,7 @@
   </div>
 </dialog>
 
-<script src="script.js?v=7"></script>
+<script src="https://web3forms.com/client/script.js" async defer></script>
+<script src="script.js?v=9"></script>
 </body>
 </html>
