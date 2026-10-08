@@ -608,3 +608,17 @@ body::after { top: calc(50% + 100px); }
   .hero-photo { background-size: cover; background-position: 72% center; }
   .hero-overlay { background: linear-gradient(180deg, rgba(20, 89, 138, .93) 0%, rgba(20, 89, 138, .86) 55%, rgba(20, 89, 138, .65) 100%); }
 }
+
+
+/* ---------- Hero: copy on the left, framed photo on the right (banner text stays fully visible) ---------- */
+.hero-photo, .hero-overlay, .skyline { display: none; }
+.hero-inner { display: grid; grid-template-columns: 1fr 1.18fr; gap: 56px; align-items: center; padding: 64px 0 104px; }
+.hero-copy { max-width: none; }
+.hero h1 { font-size: clamp(2.1rem, 3.5vw, 3.2rem); }
+.hero-media { margin: 0; border-radius: 22px; overflow: hidden; border: 1px solid rgba(255, 255, 255, .16); box-shadow: 0 30px 60px rgba(0, 0, 0, .35); }
+.hero-media img { display: block; width: 100%; height: auto; }
+.hero-tab { right: auto; left: clamp(16px, 6vw, 90px); }
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 36px; padding: 48px 0 100px; }
+  .hero h1 { font-size: clamp(2.2rem, 7.5vw, 3rem); }
+}
